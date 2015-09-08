@@ -53,3 +53,4 @@ auto r = switch_<int>(i)
 	.default_([](){return 3;})
 ;
 ```
+[Examples](https://github.com/niXman/switch/blob/master/main.cpp).
