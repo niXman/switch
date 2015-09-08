@@ -135,4 +135,49 @@ TEST_CASE("test5", "[rettype is std::string][lambda is used as values for case_'
 	);
 }
 
+TEST_CASE("test6", "[rettype is point][switch_ and case_'s key type is integral]") {
+	struct point {
+		int x,y;
+
+		point(int x, int y)
+			:x(x)
+			,y(y)
+		{}
+		bool operator==(const point &r) const {
+			return x == r.x && y == r.y;
+		}
+	};
+
+	REQUIRE(
+		switch_::switch_<point>(3)
+			.case_(2, {100, 200})
+			.case_(3, {200, 200})
+			.default_({300, 300}) == point(200,200)
+	);
+}
+
+TEST_CASE("test7", "[rettype is cstring][switch_ and case_'s key type is integral]") {
+	auto r = switch_::switch_<const char*>(2)
+		.case_(1, "1")
+		.case_(2, "2")
+		.default_("-1")
+	;
+
+	REQUIRE(
+		std::strcmp(r, "2") == 0
+	);
+}
+
+TEST_CASE("test8", "[rettype is cstring][switch_ and case_'s key type is cstring]") {
+	auto r = switch_::switch_<const char*>("2")
+	.case_("1", "1")
+	.case_("2", "2")
+	.default_("-1")
+	;
+
+	REQUIRE(
+		std::strcmp(r, "2") == 0
+	);
+}
+
 /***************************************************************************/
