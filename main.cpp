@@ -170,9 +170,9 @@ TEST_CASE("test7", "[rettype is cstring][switch_ and case_'s key type is integra
 
 TEST_CASE("test8", "[rettype is cstring][switch_ and case_'s key type is cstring]") {
 	auto r = switch_::switch_<const char*>("2")
-	.case_("1", "1")
-	.case_("2", "2")
-	.default_("-1")
+		.case_("1", "1")
+		.case_("2", "2")
+		.default_("-1")
 	;
 
 	REQUIRE(
