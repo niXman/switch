@@ -62,52 +62,52 @@ struct switch_impl {
 	switch_impl(const K key)
 		:key(key)
 		,ret()
-		{}
-		switch_impl(const switch_impl &r) = default;
-		switch_impl(switch_impl &&r) = default;
+	{}
+	switch_impl(const switch_impl &r) = default;
+	switch_impl(switch_impl &&r) = default;
 
-		template<typename Kt>
-		switch_impl& case_(const Kt &k, const R &val) {
-			if ( key_cmp(key, k) )
-				ret.emplace(val);
+	template<typename Kt>
+	switch_impl& case_(const Kt &k, const R &val) {
+		if ( key_cmp(key, k) )
+			ret.emplace(val);
 
-			return *this;
+		return *this;
+	}
+	template<typename Kt>
+	switch_impl& case_(const Kt &k, R &&val) {
+		if ( key_cmp(key, k) )
+			ret.emplace(std::move(val));
+
+		return *this;
+	}
+	template<typename Kt, typename F>
+	switch_impl& case_(const Kt &k, const F &f, typename std::result_of<F()>::type* = 0) {
+		if ( key_cmp(key, k) )
+			ret.emplace(f());
+
+		return *this;
+	}
+
+	R default_(const R &r) const {
+		return (ret ? ret.value() : r);
+	}
+
+	operator R() const {
+		if ( !ret ) {
+			#define __SWITCH_STR(x) #x
+			#define _SWITCH_STR(x) __SWITCH_STR(x)
+
+			throw std::runtime_error(
+				__FILE__ "(" _SWITCH_STR(__LINE__) "): "
+				"Fell off the end of a switch"
+			);
+
+			#undef _SWITCH_STR
+			#undef __SWITCH_STR
 		}
-		template<typename Kt>
-		switch_impl& case_(const Kt &k, R &&val) {
-			if ( key_cmp(key, k) )
-				ret.emplace(std::move(val));
 
-			return *this;
-		}
-		template<typename Kt, typename F>
-		switch_impl& case_(const Kt &k, const F &f, typename std::result_of<F()>::type* = 0) {
-			if ( key_cmp(key, k) )
-				ret.emplace(f());
-
-			return *this;
-		}
-
-		R default_(const R &r) const {
-			return (ret ? ret.value() : r);
-		}
-
-		operator R() const {
-			if ( !ret ) {
-				#define __SWITCH_STR(x) #x
-				#define _SWITCH_STR(x) __SWITCH_STR(x)
-
-				throw std::runtime_error(
-					__FILE__ "(" _SWITCH_STR(__LINE__) "): "
-					"Fell off the end of a switch"
-				);
-
-				#undef _SWITCH_STR
-				#undef __SWITCH_STR
-			}
-
-			return ret.value();
-		}
+		return ret.value();
+	}
 
 private:
 	const K key;
