@@ -28,7 +28,7 @@ struct point {
 };
 
 int i = ...;
-auto r = switch_::switch_<point>(i)
+auto r = switch_<point>(i)
 	.case_(2, {100, 200})
 	.case_(3, {200, 200})
 	.default_({300, 300})
@@ -37,7 +37,7 @@ auto r = switch_::switch_<point>(i)
 
 ```cpp
 std::string k = ...;
-auto r = switch_::switch_<point>(k)
+auto r = switch_<point>(k)
 	.case_("2", {100, 200})
 	.case_("3", {200, 200})
 	.default_({300, 300})
