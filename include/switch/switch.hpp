@@ -1,5 +1,5 @@
 
-// Copyright (c) 2015 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2015-2019 niXman (github dot nixman dog pm dot me). All
 // rights reserved.
 //
 // This file is part of SWITCH(https://github.com/niXman/switch) project.
@@ -33,85 +33,78 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef _switch__switch_hpp_included_
-#define _switch__switch_hpp_included_
+#ifndef __switch__switch_hpp
+#define __switch__switch_hpp
 
+#include <string>
+#include <optional>
 #include <type_traits>
+
 #include <cassert>
 #include <cstring>
-
-#ifdef __has_include
-#	if __has_include(<optional>)
-#		include <optional>
-#		define _STD_OPTIONAL_NS ::std
-#	elif __has_include(<experimental/optional>)
-#		include <experimental/optional>
-#		define _STD_OPTIONAL_NS ::std::experimental
-#	endif
-#endif
 
 /***************************************************************************/
 
 namespace switch_ {
 
 template<
-	 typename R
-	,typename K
+     typename R
+    ,typename K
 >
 struct switch_impl {
-	switch_impl(const K key)
-		:key(key)
-		,ret()
-	{}
-	switch_impl(const switch_impl &r) = default;
-	switch_impl(switch_impl &&r) = default;
+    switch_impl(const K key)
+        :key(key)
+        ,ret()
+    {}
+    switch_impl(const switch_impl &r) = default;
+    switch_impl(switch_impl &&r) = default;
 
-	template<typename Kt>
-	switch_impl& case_(const Kt &k, const R &val) {
-		if ( key_cmp(key, k) )
-			ret.emplace(val);
+    template<typename Kt>
+    switch_impl& case_(const Kt &k, const R &val) {
+        if ( key_cmp(key, k) )
+            ret.emplace(val);
 
-		return *this;
-	}
-	template<typename Kt>
-	switch_impl& case_(const Kt &k, R &&val) {
-		if ( key_cmp(key, k) )
-			ret.emplace(std::move(val));
+        return *this;
+    }
+    template<typename Kt>
+    switch_impl& case_(const Kt &k, R &&val) {
+        if ( key_cmp(key, k) )
+            ret.emplace(std::move(val));
 
-		return *this;
-	}
-	template<typename Kt, typename F>
-	switch_impl& case_(const Kt &k, const F &f, typename std::result_of<F()>::type* = 0) {
-		if ( key_cmp(key, k) )
-			ret.emplace(f());
+        return *this;
+    }
+    template<typename Kt, typename F>
+    switch_impl& case_(const Kt &k, const F &f, typename std::result_of<F()>::type* = 0) {
+        if ( key_cmp(key, k) )
+            ret.emplace(f());
 
-		return *this;
-	}
+        return *this;
+    }
 
-	R default_(const R &r) const {
-		return (ret ? ret.value() : r);
-	}
+    R default_(const R &r) const {
+        return (ret ? ret.value() : r);
+    }
 
-	operator R() const {
-		if ( !ret ) {
-			#define __SWITCH_STR(x) #x
-			#define _SWITCH_STR(x) __SWITCH_STR(x)
+    operator R() const {
+        if ( !ret ) {
+            #define __SWITCH_STR(x) #x
+            #define _SWITCH_STR(x) __SWITCH_STR(x)
 
-			throw std::runtime_error(
-				__FILE__ "(" _SWITCH_STR(__LINE__) "): "
-				"Fell off the end of a switch"
-			);
+            throw std::runtime_error(
+                __FILE__ "(" _SWITCH_STR(__LINE__) "): "
+                "Fell off the end of a switch"
+            );
 
-			#undef _SWITCH_STR
-			#undef __SWITCH_STR
-		}
+            #undef _SWITCH_STR
+            #undef __SWITCH_STR
+        }
 
-		return ret.value();
-	}
+        return ret.value();
+    }
 
 private:
 	const K key;
-	_STD_OPTIONAL_NS::optional<R> ret;
+	std::optional<R> ret;
 
 private:
 	static bool key_cmp(std::size_t l, std::size_t r) { return l == r; }
@@ -140,8 +133,9 @@ switch_impl<R, KT> switch_(const K &key) {
 		std::is_same<type, std::string>::value ||
 		std::is_same<type, char*>::value ||
 		std::is_integral<type>::value
-		,"key may be one of integtegral, cstring or std::string type"
+		,"key should be one of integtegral, cstring or std::string type"
 	);
+
 	return switch_impl<R, KT>(key);
 }
 
@@ -149,4 +143,4 @@ switch_impl<R, KT> switch_(const K &key) {
 
 /***************************************************************************/
 
-#endif // _switch__switch_hpp_included_
+#endif // __switch__switch_hpp

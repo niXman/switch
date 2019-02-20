@@ -1,5 +1,5 @@
 
-// Copyright (c) 2015 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2015-2019 niXman (github dot nixman dog pm dot me). All
 // rights reserved.
 //
 // This file is part of SWITCH(https://github.com/niXman/switch) project.
@@ -58,11 +58,14 @@ TEST_CASE("test1", "[rettype is int][switch_ and case_'s key type is integral]")
 			.case_(2, 2)
 			.default_(-1) == -1
 	);
+
 	REQUIRE_THROWS(
-		switch_::switch_<int>(4)
+		int v = switch_::switch_<int>(4)
 			.case_(0, 4)
 			.case_(1, 3)
-			.case_(2, 2) == 0
+			.case_(2, 2)
+		;
+		(void)v;
 	);
 }
 
@@ -82,10 +85,12 @@ TEST_CASE("test2", "[rettype is int][switch_ and case_'s key type is cstring]") 
 			.default_(-1) == -1
 	);
 	REQUIRE_THROWS(
-		switch_::switch_<int>("3")
+		int v = switch_::switch_<int>("3")
 			.case_("0", 4)
 			.case_("1", 3)
-			.case_("2", 2) == 0
+			.case_("2", 2)
+		;
+		(void)v;
 	);
 }
 
@@ -106,10 +111,12 @@ TEST_CASE("test3", "[rettype is int][switch_ key type is std::string and case_'s
 			.default_(-1) == -1
 	);
 	REQUIRE_THROWS(
-		switch_::switch_<int>(k)
+		int v = switch_::switch_<int>(k)
 			.case_(std::string("0"), 4)
 			.case_("1", 3)
-			.case_("2", 2) == 0
+			.case_("2", 2)
+		;
+		(void)v;
 	);
 }
 
